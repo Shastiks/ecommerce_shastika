@@ -1,4 +1,4 @@
-# ecommerce_shastika
+# Ecommerce Lab 4
 ## Objective
 To create frontend for the website
 ## Introduction
