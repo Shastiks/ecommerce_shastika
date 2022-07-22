@@ -1,14 +1,11 @@
-from django.shortcuts import render
-from django.db.models import Q
-from .models import Product, Brand, Category
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
-from .models import Product, CartItem
+from django.db.models import Q
+from .models import Product, Brand, Category, CartItem
 
-def index1(request):
-    return render(request,'index1.html',{})
 def index(request):
+    global categories, products, brands;
     if request.method == "GET":
         category_id = request.GET.get("category")
         brand_id = request.GET.get("brand")
@@ -20,40 +17,40 @@ def index(request):
             products = Product.objects.filter(filter_query)
         else:
             products = Product.objects.all()
-        categories = Category.objects.all()
-        brands = Brand.objects.all()
+            categories = Category.objects.all()
+            brands = Brand.objects.all()
         context = {
-                'products': products,
-                'categories': categories,
-                'brands': brands,
-                'search_query': '',
-                }
+            'products': products,
+            'categories': categories,
+            'brands': brands,
+            'search_query': '',
+            }
         return render(request, 'index.html', context)
     elif request.method == "POST":
         q = request.POST.get("query")
-        if "-" in q:
-            price_values = q.split("-")
-            filter_query = Q(price__gte=price_values[0]) & Q(price__lte=price_values[1])
-        else:
-            filter_query = Q(name__icontains=q) | Q(price__icontains=q) | Q(brand__name__icontains=q)
+    if "-" in q:
+        price_values = q.split("-")
+        filter_query = Q(price__gte=price_values[0]) & Q(price__lte=price_values[1])
+    else:
+        filter_query = Q(name__icontains=q) | Q(price__icontains=q) |Q(brand__name__icontains=q)
         products = Product.objects.filter(filter_query)
         categories = Category.objects.all()
         brands = Brand.objects.all()
         context = {
-                'products': products,
-                'categories': categories,
-                'brands': brands,
-                'search_query': q,
-            }
+            'products': products,
+            'categories': categories,
+            'brands': brands,
+            'search_query': q,
+        }
         return render(request, 'index.html', context)
-
+        
 @login_required(login_url="/admin/login")
 def cart(request):
     # get request data
     product_id = request.GET.get("id")
     quantity = request.GET.get("qty")
-    if product_id and quantity:
-    # retrieve product data
+    if product_id:
+        # retrieve product data
         product = Product.objects.get(id=product_id)
         try:
             # get cart item and increase quantity
@@ -70,13 +67,11 @@ def cart(request):
             )
             # save to database
             cart_item.save()
-    # retrieve the cart items for the user from db
     cart_items = CartItem.objects.filter(user=request.user)
-    # calculate total
     total = 0
     for item in cart_items:
         total += item.product.price * item.quantity
-        # return view
+    # return view
     context = {
         'cart_items': cart_items,
         'total': total,
@@ -84,11 +79,17 @@ def cart(request):
     return render(request, "cart.html", context)
 def removecart(request, id):
     try:
-        # get cart item and remove it
+        # get cart item and increase quantity
         product = Product.objects.get(id=id)
         cart_item = CartItem.objects.get(user=request.user, product=product)
-        cart_item.delete()
+        cart_item.delete() 
     except CartItem.DoesNotExist:
         pass
-        # redirect to cart
-        return redirect(cart)
+    # redirect to cart
+    return redirect(cart)
+def success_page(request):
+    message = request.session["message"]
+    return render(request, "success.html", {"message": message})
+def error_page(request):
+    message = request.session["message"]
+    return render(request, "error.html", {"message": message})

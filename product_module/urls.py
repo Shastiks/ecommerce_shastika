@@ -1,14 +1,9 @@
 from django.urls import path
-from .views import index, index1
-from .views import index,cart, removecart
-
+from .views import index,cart,removecart,success_page,error_page
 urlpatterns = [
     path('', index),
-    path('index1', index1),
-]
-
-urlpatterns = [
- path('', index),
- path('cart/', cart),
- path('cart/remove/<int:id>', removecart),
+    path('cart/',cart),
+    path('cart/remove/<int:id>', removecart),
+    path('success_page/', success_page, name="success_page"),
+    path('error_page/', error_page, name="error_page"),
 ]

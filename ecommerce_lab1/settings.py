@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ezjqps^_u47)7wy)tz2&uk1b-$59_1+0g#1b%xd*702pswun%x'
+SECRET_KEY = 'django-insecure-8m8_dpnivtbd+7-7m%_ae(8pc8mmg6xuzzf=c%hv2v7q!ksm*c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'product_module',
+    'payment_module',
 ]
 
 MIDDLEWARE = [
@@ -117,10 +118,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIR = [BASE_DIR/"static"]
 
-STATICFILES_DIRS=[
-    BASE_DIR/"static",
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
